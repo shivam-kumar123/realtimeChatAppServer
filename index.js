@@ -36,9 +36,11 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("receive_message", data);
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (data) => {
     userCount--
     console.log("User Disconnected", socket.id);
+    const clientsInRoom = io.sockets.adapter.rooms.get(data)?.size ?? 0;
+    io.to(data).emit("room_count", clientsInRoom);
     io.emit("user_count", userCount);
   });
 });
